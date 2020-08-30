@@ -1,15 +1,15 @@
-import pygame, random, math, os
+import pygame, math, random
 pygame.init()
 
-# SIZE SETTINGS =
+# SIZE SETTINGS
 BLOCK_SIZE = 25
 TOP_SIZE = 2 * BLOCK_SIZE
 DISPLAY_SIZE = 3 * BLOCK_SIZE
 
-# GAME SETTINGS: MIN WIDTH = 2, MIN HEIGHT = 0
+# GAME SETTINGS: MIN WIDTH = 5, MIN HEIGHT = 5
 WIDTH = 40
-HEIGHT = 30
-BOMBS = 100
+HEIGHT = 40
+BOMBS = 200
 
 # MOUSE BUTTON SIDES
 LEFT = 1
@@ -27,39 +27,37 @@ FLAGS = 0
 CHECKED = 0
 
 # IMAGES
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
-n_display = pygame.image.load("{}/Images/Number_Display.png".format(dir_path))
-n_0 = pygame.image.load("{}/Images/Num0.png".format(dir_path))
-n_1 = pygame.image.load("{}/Images/Num1.png".format(dir_path))
-n_2 = pygame.image.load("{}/Images/Num2.png".format(dir_path))
-n_3 = pygame.image.load("{}/Images/Num3.png".format(dir_path))
-n_4 = pygame.image.load("{}/Images/Num4.png".format(dir_path))
-n_5 = pygame.image.load("{}/Images/Num5.png".format(dir_path))
-n_6 = pygame.image.load("{}/Images/Num6.png".format(dir_path))
-n_7 = pygame.image.load("{}/Images/Num7.png".format(dir_path))
-n_8 = pygame.image.load("{}/Images/Num8.png".format(dir_path))
-n_9 = pygame.image.load("{}/Images/Num9.png".format(dir_path))
-fb_unclicked = pygame.image.load("{}/Images/Face_Button.png".format(dir_path))
-fb_clicked = pygame.image.load("{}/Images/Face_Button_Clicked.png".format(dir_path))
-b_unchecked = pygame.image.load("{}/Images/Unchecked.png".format(dir_path))
-b_empty = pygame.image.load("{}/Images/Empty.png".format(dir_path))
-b_flag = pygame.image.load("{}/Images/Flag.png".format(dir_path))
-b_question = pygame.image.load("{}/Images/Question.png".format(dir_path))
-b_bomb = pygame.image.load("{}/Images/Bomb.png".format(dir_path))
-b_bomb_unchecked = pygame.image.load("{}/Images/Bomb_Unchecked.png".format(dir_path))
-b_1 = pygame.image.load("{}/Images/1.png".format(dir_path))
-b_2 = pygame.image.load("{}/Images/2.png".format(dir_path))
-b_3 = pygame.image.load("{}/Images/3.png".format(dir_path))
-b_4 = pygame.image.load("{}/Images/4.png".format(dir_path))
-b_5 = pygame.image.load("{}/Images/5.png".format(dir_path))
-b_6 = pygame.image.load("{}/Images/6.png".format(dir_path))
-b_7 = pygame.image.load("{}/Images/7.png".format(dir_path))
-b_8 = pygame.image.load("{}/Images/8.png".format(dir_path))
-f_midgame = pygame.image.load("{}/Images/Face_MidGame.png".format(dir_path))
-f_check = pygame.image.load("{}/Images/Face_Check.png".format(dir_path))
-f_bomb = pygame.image.load("{}/Images/Face_Bomb.png".format(dir_path))
-f_win = pygame.image.load("{}/Images/Face_Win.png".format(dir_path))
+n_display = pygame.image.load("Images/Number_Display.png")
+n_0 = pygame.image.load("Images/Num0.png")
+n_1 = pygame.image.load("Images/Num1.png")
+n_2 = pygame.image.load("Images/Num2.png")
+n_3 = pygame.image.load("Images/Num3.png")
+n_4 = pygame.image.load("Images/Num4.png")
+n_5 = pygame.image.load("Images/Num5.png")
+n_6 = pygame.image.load("Images/Num6.png")
+n_7 = pygame.image.load("Images/Num7.png")
+n_8 = pygame.image.load("Images/Num8.png")
+n_9 = pygame.image.load("Images/Num9.png")
+fb_unclicked = pygame.image.load("Images/Face_Button.png")
+fb_clicked = pygame.image.load("Images/Face_Button_Clicked.png")
+b_unchecked = pygame.image.load("Images/Unchecked.png")
+b_empty = pygame.image.load("Images/Empty.png")
+b_flag = pygame.image.load("Images/Flag.png")
+b_question = pygame.image.load("Images/Question.png")
+b_bomb = pygame.image.load("Images/Bomb.png")
+b_bomb_unchecked = pygame.image.load("Images/Bomb_Unchecked.png")
+b_1 = pygame.image.load("Images/1.png")
+b_2 = pygame.image.load("Images/2.png")
+b_3 = pygame.image.load("Images/3.png")
+b_4 = pygame.image.load("Images/4.png")
+b_5 = pygame.image.load("Images/5.png")
+b_6 = pygame.image.load("Images/6.png")
+b_7 = pygame.image.load("Images/7.png")
+b_8 = pygame.image.load("Images/8.png")
+f_midgame = pygame.image.load("Images/Face_MidGame.png")
+f_check = pygame.image.load("Images/Face_Check.png")
+f_bomb = pygame.image.load("Images/Face_Bomb.png")
+f_win = pygame.image.load("Images/Face_Win.png")
 
 # FACE SETTINGS
 CUR_FACE = f_midgame
@@ -78,6 +76,9 @@ class Block(object):
         self.checkable = True
         self.display = display
         self.loc = loc
+
+    def show(self):
+        self.checked = True
 
     def reveal_around(self, block):
         global board
@@ -128,7 +129,7 @@ class Block(object):
             return False
 
     def check(self):
-        global WIN, CUR_FACE, FACE_TIMER, FACE_CHECK_DELAY, CHECKED
+        global WIN, CUR_FACE, FACE_TIMER, FACE_CHECK_DELAY, CHECKED, board
         if self.checked and not self.checkable and self.mark == 0:
             if self.check_flags(self.loc):
                 self.reveal_around(self.loc)
@@ -139,6 +140,8 @@ class Block(object):
             if self.type == 9:
                 WIN = 0
                 CUR_FACE = f_bomb
+                self.type = 10
+                reveal_all(board)
             else:
                 CUR_FACE = f_check
                 FACE_TIMER = FACE_CHECK_DELAY
@@ -146,6 +149,9 @@ class Block(object):
                 check_win()
             if self.type == 0:
                 self.reveal_around(self.loc)
+
+    def get_flag(self):
+        return self.mark
 
     def flag(self):
         global FLAGS
@@ -172,8 +178,10 @@ class Block(object):
                 self.display.blit(b_question, loc)
 
         else:
-            if self.type == 9:
+            if self.type == 10:
                 self.display.blit(b_bomb, loc)
+            elif self.type == 9:
+                self.display.blit(b_bomb_unchecked, loc)
             elif self.type == 1:
                 self.display.blit(b_1, loc)
             elif self.type == 2:
@@ -198,8 +206,8 @@ def check_win():
     global WIN
     # Checks if all cells are flagged or checked
     if FLAGS == BOMBS:
-        if CHECKED == WIDTH*HEIGHT - FLAGS:
-            WIN = 2
+    	if CHECKED == WIDTH*HEIGHT - FLAGS:
+        	WIN = 2
 
 board = []
 
@@ -251,6 +259,13 @@ def make_board():
                 if board[b[0] + 1][b[1] + 1].type != 9: board[b[0] + 1][b[1] + 1].type += 1
 
     return board
+
+# REVEAL ALL BLOCKS WHEN CLICKED ON BOMB
+def reveal_all(board):
+    for row in board:
+        for block in row:
+            if block.get_flag() != 1:
+                block.show()
 
 # MAIN GAME LOOP FUNCTION
 def main_loop():
